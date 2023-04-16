@@ -1,11 +1,16 @@
 package org.github.allenlei3.rpc.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
  * @author xulei
  * @version 0.0.1
  */
+@Getter
+@Setter
 public class RegistryConfig implements Serializable {
 
     private static final long serialVersionUID = 5508512956753757169L;
@@ -20,19 +25,4 @@ public class RegistryConfig implements Serializable {
      */
     private String address;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

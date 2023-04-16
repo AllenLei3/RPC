@@ -1,5 +1,9 @@
 package org.github.allenlei3.rpc.config;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.github.allenlei3.rpc.common.Constants;
+
 /**
  * RPC服务引用方配置类
  *
@@ -12,98 +16,78 @@ public class RpcReferenceConfig<SERVICE> extends AbstractRpcConfig<SERVICE> {
      * PRC调用超时时间
      * 单位:毫秒
      */
-    protected Integer timeout;
+    @Getter
+    @Setter
+    private Integer timeout = Constants.DEFAULT_TIMEOUT;
 
     /**
      * 失败重试次数
      */
-    protected Integer retries;
+    @Getter
+    @Setter
+    private Integer retries = Constants.DEFAULT_RETRIES;
 
     /**
      * 集群容错策略
      */
-    protected String cluster;
+    @Getter
+    @Setter
+    private String cluster;
 
     /**
      * 路由策略
      */
-    protected String router;
+    @Getter
+    @Setter
+    private String router;
 
     /**
      * 负载均衡策略
      */
-    protected String loadBalance;
+    @Getter
+    @Setter
+    private String loadBalance;
 
     /**
      * 是否缓存RPC调用的响应信息
      */
-    protected Boolean enableCache;
+    @Getter
+    @Setter
+    private Boolean enableCache = Constants.DEFAULT_ENABLE_CACHE;
 
     /**
      * 缓存策略
      */
-    protected String cache;
+    @Getter
+    @Setter
+    private String cache;
+
+    private transient volatile boolean initialized;
+    private transient volatile SERVICE reference;
 
     /**
-     * 获取引用的RPC服务实例
+     * 获取服务引用实例
      */
-    public SERVICE getInstance() {
-        return null;
+    public synchronized SERVICE get() {
+        checkConfig();
+        if (reference == null) {
+            init();
+        }
+        return reference;
     }
 
-    public Integer getTimeout() {
-        return timeout;
+    private void init() {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
     }
 
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
-    }
-
-    public Integer getRetries() {
-        return retries;
-    }
-
-    public void setRetries(Integer retries) {
-        this.retries = retries;
-    }
-
-    public String getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(String cluster) {
-        this.cluster = cluster;
-    }
-
-    public String getRouter() {
-        return router;
-    }
-
-    public void setRouter(String router) {
-        this.router = router;
-    }
-
-    public String getLoadBalance() {
-        return loadBalance;
-    }
-
-    public void setLoadBalance(String loadBalance) {
-        this.loadBalance = loadBalance;
-    }
-
-    public Boolean getEnableCache() {
-        return enableCache;
-    }
-
-    public void setEnableCache(Boolean enableCache) {
-        this.enableCache = enableCache;
-    }
-
-    public String getCache() {
-        return cache;
-    }
-
-    public void setCache(String cache) {
-        this.cache = cache;
+    @Override
+    protected void checkConfig() {
+        super.checkConfig();
+        if (timeout <= 0) {
+            throw new IllegalArgumentException("timeout must more than 0!");
+        }
     }
 }
